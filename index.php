@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace  tool_managecourse;
+namespace  tool_analys;
 
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -49,7 +49,7 @@ $PAGE->set_title(get_string('analys', 'tool_analys'));
 $PAGE->set_heading(get_string('analys', 'tool_analys'));
 
 $returnurl = new \moodle_url('/admin/tool/analys/index.php');
-$renderer = $PAGE->get_renderer('tool_analys');
+//$renderer = $PAGE->get_renderer('tool_analys');
 
 echo $OUTPUT->header();
 echo "THis is a test";

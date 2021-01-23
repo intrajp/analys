@@ -31,7 +31,7 @@ if ($hassiteconfig) {
     $ADMIN->add('tools', $settings);
 
     $ADMIN->add(
-        'admin',
+        'development',
         new admin_externalpage(
             'tool_analys', get_string('analys', 'tool_analys'),
             new moodle_url('/admin/tool/analys/index.php')
