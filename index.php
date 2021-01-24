@@ -28,6 +28,7 @@ namespace  tool_analys;
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
+require_once($CFG->dirroot.'/admin/tool/analys/classes/renderer.php');
 
 if (isguestuser()) {
     throw new \require_login_exception('Guests are not allowed here.');
@@ -49,8 +50,15 @@ $PAGE->set_title(get_string('analys', 'tool_analys'));
 $PAGE->set_heading(get_string('analys', 'tool_analys'));
 
 $returnurl = new \moodle_url('/admin/tool/analys/index.php');
-//$renderer = $PAGE->get_renderer('tool_analys');
+$renderer = $PAGE->get_renderer('tool_analys');
+$dbtype = $CFG->dbtype;
+if ($dbtype === 'pgsql') {
+$counts = $renderer->get_session_count_time_eight_hours_pgsql();
+} else { 
+    echo "Use PostgreSQL!";
+    die;
+}
 
 echo $OUTPUT->header();
-echo "THis is a test";
+echo "User sessions recent 8 hours: $counts";
 echo $OUTPUT->footer();

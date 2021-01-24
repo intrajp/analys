@@ -15,17 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Implements the plugin rendering page 
  *
  * @package     tool_analys
- * @copyright   2021 Shintaro Fujiwara <shintaro.fujiwara@gmail.com>
+ * @category    admin
+ * @copyright   2021 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_analys';
-$plugin->release = '0.0.3';
-$plugin->version = 2021012401;
-$plugin->requires = 2018051700;
-//$plugin->maturity = MATURITY_ALPHA;
+/**
+ * Implements the plugin renderer
+ *
+ * @copyright   2021 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_analys_renderer extends plugin_renderer_base {
+
+//// methods
+
+    public function get_session_count_time_eight_hours_pgsql() {
+
+        global $DB;
+        $sessioncounttime = $DB->get_record_sql('SELECT count(userid) as c FROM {sessions}
+                                                WHERE timemodified <= extract(epoch from now())
+                                                - 28800', array());
+
+        return $sessioncounttime->c;
+
+    }
+
+}
