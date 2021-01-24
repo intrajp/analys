@@ -15,17 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Definition of analys tasks
  *
  * @package     tool_analys
- * @copyright   2021 Shintaro Fujiwara <shintaro.fujiwara@gmail.com>
+ * @category    task 
+ * @copyright   2021 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_analys';
-$plugin->release = '0.0.9';
-$plugin->version = 2021012407;
-$plugin->requires = 2018051700;
-//$plugin->maturity = MATURITY_ALPHA;
+$tasks = array(
+    array(
+        'classname' => 'tool_analys\task\count_user_sessions',
+        'blocking' => 0,
+        'minute' => '*/30',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);

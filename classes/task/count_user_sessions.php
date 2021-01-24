@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Implements  task 
  *
  * @package     tool_analys
- * @copyright   2021 Shintaro Fujiwara <shintaro.fujiwara@gmail.com>
+ * @category    admin
+ * @copyright   2021 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace tool_analys\task;
 
-$plugin->component = 'tool_analys';
-$plugin->release = '0.0.9';
-$plugin->version = 2021012407;
-$plugin->requires = 2018051700;
-//$plugin->maturity = MATURITY_ALPHA;
+require_once($CFG->dirroot.'/admin/tool/analys/classes/count_sessions.php');
+
+class count_user_sessions extends \core\task\scheduled_task {
+    public function get_name(){
+        return get_string('taskcountusersessions', 'tool_analys');
+    }
+
+    public function execute(){
+
+        \core_php_time_limit::raise(0);//infinite
+        \raise_memory_limit(MEMORY_HUGE);
+        global $CFG;
+        $dbtype = $CFG->dbtype;
+        if ( $dbtype === 'pgsql' ) {
+            $obj = new \count_sessions();
+            $obj->insert_session_count_time_eight_hours_pgsql();
+        }
+    }
+}
