@@ -5,11 +5,11 @@
 
 Features
 --------
-- Show userssion count recent 8 hours. 
+- Show userssion count in recent 8 hours. 
 
 TODO
 --------
-- Implement useful features concerning course for admins.
+- Implement useful features concerning analyzing Moodle for admins.
 
 ## License ##
 

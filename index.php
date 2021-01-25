@@ -54,11 +54,14 @@ $dbtype = $CFG->dbtype;
 if ($dbtype === 'pgsql') {
     $obj = new \count_sessions();
     $counts = $obj->get_session_count_time_eight_hours_pgsql();
+} else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
+    $obj = new \count_sessions();
+    $counts = $obj->get_session_count_time_eight_hours_mysql();
 } else { 
     echo "Use PostgreSQL!";
     die;
 }
 
 echo $OUTPUT->header();
-echo "User sessions recent 8 hours: $counts";
+echo "User sessions in recent 8 hours: $counts";
 echo $OUTPUT->footer();

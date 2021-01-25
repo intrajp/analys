@@ -38,9 +38,7 @@ class count_user_sessions extends \core\task\scheduled_task {
         \raise_memory_limit(MEMORY_HUGE);
         global $CFG;
         $dbtype = $CFG->dbtype;
-        if ( $dbtype === 'pgsql' ) {
-            $obj = new \count_sessions();
-            $obj->insert_session_count_time_eight_hours_pgsql();
-        }
+        $obj = new \count_sessions();
+        $obj->insert_session_count_time_eight_hours();
     }
 }

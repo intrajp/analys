@@ -49,15 +49,39 @@ class count_sessions {
 
     }
 
-    public function insert_session_count_time_eight_hours_pgsql() {
+    public function get_session_count_time_eight_hours_mysql() {
 
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
 
         global $DB;
-        $c = $this->get_session_count_time_eight_hours_pgsql();
+        $sessioncounttime = $DB->get_record_sql('SELECT count(userid) as c FROM {sessions}
+                                                WHERE timemodified <= now()
+                                                - 28800', array());
+
+        return $sessioncounttime->c;
+
+    }
+
+    public function insert_session_count_time_eight_hours() {
+
+        \core_php_time_limit::raise(0);//infinite
+        \raise_memory_limit(MEMORY_HUGE);
+
+        global $CFG;
+        global $DB;
+        $dbtype = $CFG->dbtype;
+        if ($dbtype === 'pgsql') {
+            $c = $this->get_session_count_time_eight_hours_pgsql();
+        } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
+            $c = $this->get_session_count_time_eight_hours_mysql();
+        } else { 
+            return false;
+        } 
         $lapse = '8H';
         $rs = $DB->insert_record('tool_analys_d', ['time' => time(), 'sessions' => $c, 'lapse' => "$lapse"]);
+
+        return true;
 
     }
 
