@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_analys';
-$plugin->release = '0.0.9';
-$plugin->version = 2021012407;
+$plugin->release = '0.0.11';
+$plugin->version = 2021012500;
 $plugin->requires = 2018051700;
 //$plugin->maturity = MATURITY_ALPHA;
