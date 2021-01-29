@@ -62,6 +62,26 @@ if ($dbtype === 'pgsql') {
     die;
 }
 
+$sessions = $obj->get_session_today_eight_hours();
+
 echo $OUTPUT->header();
 echo "User sessions in recent 8 hours: $counts";
+echo "<br />";
+echo "<br />";
+echo "<table border=1>";
+echo "<tr>";
+echo "<th>time</th>";
+echo "<th>sessions</th>";
+echo "</tr>";
+foreach ($sessions as $s) {
+    echo "<tr>";
+    echo "<td>";
+    echo date("Y-m-d H:i:s", $s->time);
+    echo "</td>";
+    echo "<td align=\"center\">";
+    echo "$s->sessions";
+    echo "</td>";
+    echo "</tr>";
+}
+echo "</table>";
 echo $OUTPUT->footer();
