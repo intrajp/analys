@@ -4,12 +4,17 @@
 ## Use PostgreSQL which is good in many ways.
 
 Features
---------
+
+```
 - Show userssion count in recent 8 hours. 
+- Show userssion count of today. 
+```
 
 TODO
---------
+
+```
 - Implement useful features concerning analyzing Moodle for admins.
+```
 
 ## License ##
 
