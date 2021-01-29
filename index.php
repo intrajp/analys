@@ -54,6 +54,7 @@ $dbtype = $CFG->dbtype;
 if ($dbtype === 'pgsql') {
     $obj = new \count_sessions();
     $counts = $obj->get_session_count_time_eight_hours_pgsql();
+    $sessions = $obj->get_session_today_eight_hours_pgsql();
 } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
     $obj = new \count_sessions();
     $counts = $obj->get_session_count_time_eight_hours_mysql();
@@ -64,4 +65,22 @@ if ($dbtype === 'pgsql') {
 
 echo $OUTPUT->header();
 echo "User sessions in recent 8 hours: $counts";
+echo "<br />";
+echo "<br />";
+echo "<table border=1>";
+echo "<tr>";
+echo "<th>time</th>";
+echo "<th>sessions</th>";
+echo "</tr>";
+foreach ($sessions as $s) {
+    echo "<tr>";
+    echo "<td>";
+    echo gmdate("Y-m-d H:i:s", $s->time);
+    echo "</td>";
+    echo "<td align=\"center\">";
+    echo "$s->sessions";
+    echo "</td>";
+    echo "</tr>";
+}
+echo "</table>";
 echo $OUTPUT->footer();

@@ -85,4 +85,20 @@ class count_sessions {
 
     }
 
+    public function get_session_today_eight_hours_pgsql() {
+
+        \core_php_time_limit::raise(0);//infinite
+        \raise_memory_limit(MEMORY_HUGE);
+
+        global $DB;
+
+        //SELECT time,sessions,lapse FROM mdl_tool_analys_d WHERE time > extract(epoch from now()::date) AND lapse = '8H';
+        $sessions = $DB->get_records_sql('SELECT time, sessions, lapse FROM {tool_analys_d}
+                                                WHERE time > extract(epoch from now()::date) AND lapse = \'8H\'',
+                                                array(), $params=null, $limitfrom=0, $limitnum=0);
+
+	return $sessions;
+
+    }
+
 }
