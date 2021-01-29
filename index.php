@@ -75,7 +75,7 @@ echo "</tr>";
 foreach ($sessions as $s) {
     echo "<tr>";
     echo "<td>";
-    echo gmdate("Y-m-d H:i:s", $s->time);
+    echo date("Y-m-d H:i:s", $s->time);
     echo "</td>";
     echo "<td align=\"center\">";
     echo "$s->sessions";

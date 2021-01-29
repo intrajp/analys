@@ -92,12 +92,13 @@ class count_sessions {
 
         global $DB;
 
-        //SELECT time,sessions,lapse FROM mdl_tool_analys_d WHERE time > extract(epoch from now()::date) AND lapse = '8H';
-        $sessions = $DB->get_records_sql('SELECT time, sessions, lapse FROM {tool_analys_d}
-                                                WHERE time > extract(epoch from now()::date) AND lapse = \'8H\'',
-                                                array(), $params=null, $limitfrom=0, $limitnum=0);
+        $begin_of_day = strtotime("today", time());
+        $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
+                                              WHERE time > $begin_of_day 
+                                              AND lapse = '8H'",
+                                              array(), $params=null, $limitfrom=0, $limitnum=0);
 
-	return $sessions;
+        return $sessions;
 
     }
 
