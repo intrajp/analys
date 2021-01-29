@@ -85,7 +85,7 @@ class count_sessions {
 
     }
 
-    public function get_session_today_eight_hours_pgsql() {
+    public function get_session_today_eight_hours() {
 
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
