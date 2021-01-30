@@ -44,7 +44,8 @@ if (!is_siteadmin()) {
     die;
 }
 
-if (($dbgype === 'pgsql') || ($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
+$dbtype = $CFG->dbtype;
+if (($dbtype === 'pgsql') || ($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
     $obj = new \count_sessions();
     $sessions = $obj->get_session_today_eight_hours();
 } else {
