@@ -44,46 +44,41 @@ if (!is_siteadmin()) {
     die;
 }
 
-$url = new \moodle_url('/admin/tool/analys/index.php');
-$PAGE->set_url($url);
-$PAGE->set_title(get_string('analys', 'tool_analys'));
-$PAGE->set_heading(get_string('analys', 'tool_analys'));
-
-$returnurl = new \moodle_url('/admin/tool/analys/index.php');
 $dbtype = $CFG->dbtype;
-if ($dbtype === 'pgsql') {
+if (($dbtype === 'pgsql') || ($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
     $obj = new \count_sessions();
-    $counts = $obj->get_session_count_time_eight_hours_pgsql();
-} else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
-    $obj = new \count_sessions();
-    $counts = $obj->get_session_count_time_eight_hours_mysql();
-} else { 
+    $sessions = $obj->get_session_today_eight_hours();
+} else {
     echo "Use PostgreSQL!";
     die;
 }
 
-$sessions = $obj->get_session_today_eight_hours();
+make_temp_directory("tool_analys");
 
-echo $OUTPUT->header();
-echo "<a href=\"download.php\">Download a file.</a>";
-echo "<br />";
-echo "User sessions in recent 8 hours: $counts";
-echo "<br />";
-echo "<br />";
-echo "<table border=1>";
-echo "<tr>";
-echo "<th>time</th>";
-echo "<th>sessions</th>";
-echo "</tr>";
+$storage = $CFG->dataroot.'/temp/tool_analys';
+
+$today = date("Y-m-d");
+$download_file = "$storage/$today.csv";
+
+$list = array (
+    array('date', 'sessions', 'lapse'),
+);
+
 foreach ($sessions as $s) {
-    echo "<tr>";
-    echo "<td>";
-    echo date("Y-m-d H:i:s", $s->time);
-    echo "</td>";
-    echo "<td align=\"center\">";
-    echo "$s->sessions";
-    echo "</td>";
-    echo "</tr>";
+    $date_day = date("Y-m-d H:i:s", $s->time);
+    $list2 = array($date_day,$s->sessions,"8H");
+    array_push ($list,$list2);
 }
-echo "</table>";
-echo $OUTPUT->footer();
+
+$fp = fopen("$download_file", 'w');
+
+if ($fp) {
+    foreach ($list as $fields) {
+        fputcsv($fp, $fields);
+    }
+}
+
+fclose($fp);
+
+//Now let the administrator download a file.
+$rs = send_temp_file("$download_file","$today.csv");
