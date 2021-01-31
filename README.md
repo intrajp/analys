@@ -8,7 +8,7 @@ Features
 ```
 - Show userssion count in recent 8 hours. 
 - Show userssion count of today. 
-- Download a file of usersession of today. 
+- Download a file of usersession of a week. 
 ```
 
 TODO
