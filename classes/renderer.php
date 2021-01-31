@@ -41,7 +41,7 @@ class tool_analys_renderer extends plugin_renderer_base {
 
         global $CFG;
         $obj = new \count_sessions();
-        $sessions = $obj->get_session_today_eight_hours($page*$perpage, $perpage);
+        $sessions = $obj->get_session_today_eight_hours($page*$perpage, $perpage, 0);
 
         $data = array();
 
