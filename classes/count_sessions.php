@@ -93,7 +93,7 @@ class count_sessions {
 
     }
 
-    public function get_session_today_eight_hours($offset, $limit, $week_before) {
+    public function get_session_today_eight_hours($offset, $limit, $week_before, $order) {
 
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
@@ -108,18 +108,26 @@ class count_sessions {
             $begin_of_day = strtotime("today", time());
         }
 
+	if ($order === 0) {
+            $order = "ASC";
+	} else {
+            $order = "DESC";
+	}
+
         $dbtype = $CFG->dbtype;
         if ($dbtype === 'pgsql') {
             $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
                                                   WHERE time > $begin_of_day 
-                                                  AND lapse = '8H' offset $offset limit $limit",
+                                                  AND lapse = '8H' ORDER BY time $order offset $offset limit $limit",
                                                   array(), $params=null, $limitfrom=0, $limitnum=0);
         } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
             $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
                                                   WHERE time > $begin_of_day 
-                                                  AND lapse = '8H' ORDER BY time limit $limit offset $offset",
+                                                  AND lapse = '8H' ORDER BY time $order limit $limit offset $offset",
                                                   array(), $params=null, $limitfrom=0, $limitnum=0);
-        } 
+	} else {
+            return $false;
+	} 
 
       return $sessions;
 

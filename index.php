@@ -60,7 +60,6 @@ $dir     = optional_param('dir', 'ASC', PARAM_ALPHA); // direction
 
 $obj = new \count_sessions();
 $counts = $obj->get_session_count_time_eight_hours();
-$sessions = $obj->get_session_today_eight_hours($page*$perpage, $perpage, 0);
 $sessions_count = $obj->get_session_today_eight_hours_count();
 $renderer = $PAGE->get_renderer('tool_analys');
 $baseurl = new \moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
@@ -73,7 +72,7 @@ echo "User sessions in recent 8 hours: $counts";
 echo "<br />";
 echo "<br />";
 
-echo "Showing ".$sessions_count." sessions of today.";
+echo "Showing ".$sessions_count." session records of today.";
 echo $OUTPUT->paging_bar($sessions_count, $page, $perpage, $baseurl);
 echo $renderer->show_table($page, $perpage);
 echo $OUTPUT->paging_bar($sessions_count, $page, $perpage, $baseurl);
