@@ -29,6 +29,7 @@ require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/analys/classes/count_sessions.php');
+require_once($CFG->dirroot.'/admin/tool/analys/classes/renderer.php');
 
 if (isguestuser()) {
     throw new \require_login_exception('Guests are not allowed here.');
@@ -50,40 +51,31 @@ $PAGE->set_title(get_string('analys', 'tool_analys'));
 $PAGE->set_heading(get_string('analys', 'tool_analys'));
 
 $returnurl = new \moodle_url('/admin/tool/analys/index.php');
-$dbtype = $CFG->dbtype;
-if ($dbtype === 'pgsql') {
-    $obj = new \count_sessions();
-    $counts = $obj->get_session_count_time_eight_hours_pgsql();
-} else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
-    $obj = new \count_sessions();
-    $counts = $obj->get_session_count_time_eight_hours_mysql();
-} else { 
-    echo "Use PostgreSQL!";
-    die;
-}
 
-$sessions = $obj->get_session_today_eight_hours();
+// page parameters
+$page    = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
+$sort    = optional_param('sort', 'date', PARAM_ALPHA);
+$dir     = optional_param('dir', 'ASC', PARAM_ALPHA); // direction
+
+$obj = new \count_sessions();
+$counts = $obj->get_session_count_time_eight_hours();
+$sessions = $obj->get_session_today_eight_hours($page*$perpage, $perpage);
+$sessions_count = $obj->get_session_today_eight_hours_count();
+$renderer = $PAGE->get_renderer('tool_analys');
+$baseurl = new \moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 
 echo $OUTPUT->header();
-echo "<a href=\"download.php\">Download a file.</a>";
+
+echo "<a href=\"download.php\">Download a file of today.</a>";
 echo "<br />";
 echo "User sessions in recent 8 hours: $counts";
 echo "<br />";
 echo "<br />";
-echo "<table border=1>";
-echo "<tr>";
-echo "<th>time</th>";
-echo "<th>sessions</th>";
-echo "</tr>";
-foreach ($sessions as $s) {
-    echo "<tr>";
-    echo "<td>";
-    echo date("Y-m-d H:i:s", $s->time);
-    echo "</td>";
-    echo "<td align=\"center\">";
-    echo "$s->sessions";
-    echo "</td>";
-    echo "</tr>";
-}
-echo "</table>";
+
+echo "Showing ".$sessions_count." sessions of today.";
+echo $OUTPUT->paging_bar($sessions_count, $page, $perpage, $baseurl);
+echo $renderer->show_table($page, $perpage);
+echo $OUTPUT->paging_bar($sessions_count, $page, $perpage, $baseurl);
+
 echo $OUTPUT->footer();
