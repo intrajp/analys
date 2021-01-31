@@ -93,14 +93,20 @@ class count_sessions {
 
     }
 
-    public function get_session_today_eight_hours($offset, $limit) {
+    public function get_session_today_eight_hours($offset, $limit, $week_before) {
 
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
 
         global $DB;
 
-        $begin_of_day = strtotime("today", time());
+        if ($week_before === 1) {
+            $begin_of_day = strtotime("-1 week", time());
+            $limit = $limit * 7;
+        } else {
+            $begin_of_day = strtotime("today", time());
+        }
+
         $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
                                               WHERE time > $begin_of_day 
                                               AND lapse = '8H' offset $offset limit $limit",
