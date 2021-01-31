@@ -98,6 +98,7 @@ class count_sessions {
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
 
+        global $CFG;
         global $DB;
 
         if ($week_before === 1) {
@@ -107,12 +108,20 @@ class count_sessions {
             $begin_of_day = strtotime("today", time());
         }
 
-        $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
-                                              WHERE time > $begin_of_day 
-                                              AND lapse = '8H' offset $offset limit $limit",
-                                              array(), $params=null, $limitfrom=0, $limitnum=0);
+        $dbtype = $CFG->dbtype;
+        if ($dbtype === 'pgsql') {
+            $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
+                                                  WHERE time > $begin_of_day 
+                                                  AND lapse = '8H' offset $offset limit $limit",
+                                                  array(), $params=null, $limitfrom=0, $limitnum=0);
+        } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
+            $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
+                                                  WHERE time > $begin_of_day 
+                                                  AND lapse = '8H' ORDER BY time limit $limit offset $offset",
+                                                  array(), $params=null, $limitfrom=0, $limitnum=0);
+        } 
 
-        return $sessions;
+      return $sessions;
 
     }
 
