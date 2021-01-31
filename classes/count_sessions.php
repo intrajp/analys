@@ -35,29 +35,26 @@ class count_sessions {
 
 //// methods
 
-    public function get_session_count_time_eight_hours_pgsql() {
+    public function get_session_count_time_eight_hours() {
 
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
 
+        global $CFG;
         global $DB;
-        $sessioncounttime = $DB->get_record_sql('SELECT count(userid) as c FROM {sessions}
-                                                WHERE timemodified <= extract(epoch from now())
-                                                - 28800', array());
 
-        return $sessioncounttime->c;
-
-    }
-
-    public function get_session_count_time_eight_hours_mysql() {
-
-        \core_php_time_limit::raise(0);//infinite
-        \raise_memory_limit(MEMORY_HUGE);
-
-        global $DB;
-        $sessioncounttime = $DB->get_record_sql('SELECT count(userid) as c FROM {sessions}
-                                                WHERE timemodified <= now()
-                                                - 28800', array());
+        $dbtype = $CFG->dbtype;
+        if ($dbtype === 'pgsql') {
+            $sessioncounttime = $DB->get_record_sql('SELECT count(userid) as c FROM {sessions}
+                                                    WHERE timemodified <= extract(epoch from now())
+                                                    - 28800', array());
+        } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
+            $sessioncounttime = $DB->get_record_sql('SELECT count(userid) as c FROM {sessions}
+                                                    WHERE timemodified <= now()
+                                                    - 28800', array());
+        } else { 
+            return false;
+        }
 
         return $sessioncounttime->c;
 
@@ -70,14 +67,8 @@ class count_sessions {
 
         global $CFG;
         global $DB;
-        $dbtype = $CFG->dbtype;
-        if ($dbtype === 'pgsql') {
-            $c = $this->get_session_count_time_eight_hours_pgsql();
-        } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
-            $c = $this->get_session_count_time_eight_hours_mysql();
-        } else { 
-            return false;
-        } 
+
+        $c = $this->get_session_count_time_eight_hours();
         $lapse = '8H';
         $rs = $DB->insert_record('tool_analys_d', ['time' => time(), 'sessions' => $c, 'lapse' => "$lapse"]);
 
@@ -85,7 +76,24 @@ class count_sessions {
 
     }
 
-    public function get_session_today_eight_hours() {
+    public function get_session_today_eight_hours_count() {
+
+        \core_php_time_limit::raise(0);//infinite
+        \raise_memory_limit(MEMORY_HUGE);
+
+        global $DB;
+
+        $begin_of_day = strtotime("today", time());
+        $sessions = $DB->get_record_sql("SELECT count(time) as c FROM {tool_analys_d}
+                                              WHERE time > $begin_of_day 
+                                              AND lapse = '8H'",
+                                              array(), $params=null, $limitfrom=0, $limitnum=0);
+
+        return $sessions->c;
+
+    }
+
+    public function get_session_today_eight_hours($offset, $limit) {
 
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
@@ -95,7 +103,7 @@ class count_sessions {
         $begin_of_day = strtotime("today", time());
         $sessions = $DB->get_records_sql("SELECT time, sessions, lapse FROM {tool_analys_d}
                                               WHERE time > $begin_of_day 
-                                              AND lapse = '8H'",
+                                              AND lapse = '8H' offset $offset limit $limit",
                                               array(), $params=null, $limitfrom=0, $limitnum=0);
 
         return $sessions;
