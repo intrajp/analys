@@ -66,13 +66,25 @@ class get_assignment_submit_list {
         }
 
         $dbtype = $CFG->dbtype;
-        $assignments = $DB->get_records_sql("SELECT s.timemodified as timemodifird, u.username as username, u.lastname as lastname,
-                                                 c.shortname as shortname, a.name as assignname 
-                                                 FROM {assign} a, {assign_submission} s, {user} u, {course} c
-                                                 WHERE s.userid = u.id AND s.assignment = a.id AND a.course = c.id
-                                                 ORDER BY timemodified $order offset $offset limit $limit 
-                                            ",
-                                            array(), $params=null, $limitfrom=0, $limitnum=0);
+        if ($dbtype === 'pgsql') {
+            $assignments = $DB->get_records_sql("SELECT s.timemodified as timemodifird, u.username as username, u.lastname as lastname,
+                                                     c.shortname as shortname, a.name as assignname 
+                                                     FROM {assign} a, {assign_submission} s, {user} u, {course} c
+                                                     WHERE s.userid = u.id AND s.assignment = a.id AND a.course = c.id
+                                                     ORDER BY timemodified $order offset $offset limit $limit 
+                                                ",
+                                                array(), $params=null, $limitfrom=0, $limitnum=0);
+        } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
+            $assignments = $DB->get_records_sql("SELECT s.timemodified as timemodifird, u.username as username, u.lastname as lastname,
+                                                     c.shortname as shortname, a.name as assignname 
+                                                     FROM {assign} a, {assign_submission} s, {user} u, {course} c
+                                                     WHERE s.userid = u.id AND s.assignment = a.id AND a.course = c.id
+                                                     ORDER BY timemodified $order limit $limit offset $offset
+                                                ",
+                                                array(), $params=null, $limitfrom=0, $limitnum=0);
+        } else {
+            return $false;
+        } 
 
         return $assignments;
 
