@@ -68,8 +68,46 @@ class tool_analys_renderer extends plugin_renderer_base {
         return html_writer::table($table, array('sort' => 'location', 'dir' => 'ASC',
                                       'perpage' => $perpage));
 
-    return true;
+        return true;
 
     }
 
+    public function show_table_assignment_submit_list($page, $perpage) {
+
+        global $CFG;
+        $obj = new \get_assignment_submit_list();
+        $assignments = $obj->get_assignment_submit_arr($page*$perpage, $perpage, 1);
+
+        $data = array();
+
+        $table = new html_table();
+
+        $table->head = [
+            get_string('assignmentsubmitlist', 'tool_analys'),
+        ];
+        $row_top = new html_table_row(array(
+            new html_table_cell("timemodified"),
+            new html_table_cell("username"),
+            new html_table_cell("lastname"),
+            new html_table_cell("shortname"),
+            new html_table_cell("assignname"),
+        ));
+        $data[] = $row_top;
+        foreach ($assignments as $s) {
+            $row = array();
+            $row[] = $s->timemodified;
+            $row[] = $s->username;
+            $row[] = $s->lastname;
+            $row[] = $s->shortname;
+            $row[] = $s->assignname;
+            $data[] = $row;
+        }
+        $table->data = $data;
+        $perpage = 1;
+        return html_writer::table($table, array('sort' => 'location', 'dir' => 'DESC',
+                                      'perpage' => $perpage));
+
+        return true;
+
+    }
 }

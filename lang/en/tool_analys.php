@@ -28,3 +28,4 @@ $string['pluginname'] = 'analys';
 $string['analys'] = 'Analyse Moodle in many ways';
 $string['taskcountusersessions'] = 'Count user sessions';
 $string['sessioncount'] = 'Count user sessions';
+$string['assignmentsubmitlist'] = 'Assignment submit list';
