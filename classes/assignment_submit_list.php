@@ -57,6 +57,7 @@ class get_assignment_submit_list {
         \core_php_time_limit::raise(0);//infinite
         \raise_memory_limit(MEMORY_HUGE);
 
+        global $CFG;
         global $DB;
 
         if ($order === 0) {
@@ -67,7 +68,7 @@ class get_assignment_submit_list {
 
         $dbtype = $CFG->dbtype;
         if ($dbtype === 'pgsql') {
-            $assignments = $DB->get_records_sql("SELECT s.timemodified as timemodifird, u.username as username, u.lastname as lastname,
+            $assignments = $DB->get_records_sql("SELECT s.timemodified as timemodified, u.username as username, u.lastname as lastname,
                                                      c.shortname as shortname, a.name as assignname 
                                                      FROM {assign} a, {assign_submission} s, {user} u, {course} c
                                                      WHERE s.userid = u.id AND s.assignment = a.id AND a.course = c.id
@@ -75,7 +76,7 @@ class get_assignment_submit_list {
                                                 ",
                                                 array(), $params=null, $limitfrom=0, $limitnum=0);
         } else if (($dbtype === 'mariadb') || ($dbtype === 'mysql')) { 
-            $assignments = $DB->get_records_sql("SELECT s.timemodified as timemodifird, u.username as username, u.lastname as lastname,
+            $assignments = $DB->get_records_sql("SELECT s.timemodified as timemodified, u.username as username, u.lastname as lastname,
                                                      c.shortname as shortname, a.name as assignname 
                                                      FROM {assign} a, {assign_submission} s, {user} u, {course} c
                                                      WHERE s.userid = u.id AND s.assignment = a.id AND a.course = c.id

@@ -39,7 +39,6 @@ class tool_analys_renderer extends plugin_renderer_base {
 
     public function show_table($page, $perpage) {
 
-        global $CFG;
         $obj = new \count_sessions();
         $sessions = $obj->get_session_today_eight_hours($page*$perpage, $perpage, 0, 1);
 
@@ -74,7 +73,6 @@ class tool_analys_renderer extends plugin_renderer_base {
 
     public function show_table_assignment_submit_list($page, $perpage) {
 
-        global $CFG;
         $obj = new \get_assignment_submit_list();
         $assignments = $obj->get_assignment_submit_arr($page*$perpage, $perpage, 1);
 
@@ -95,7 +93,7 @@ class tool_analys_renderer extends plugin_renderer_base {
         $data[] = $row_top;
         foreach ($assignments as $s) {
             $row = array();
-            $row[] = $s->timemodified;
+            $row[] = date("Y-m-d H:i:s", $s->timemodified);
             $row[] = $s->username;
             $row[] = $s->lastname;
             $row[] = $s->shortname;
