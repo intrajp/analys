@@ -28,7 +28,7 @@ namespace  tool_analys;
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
-require_once($CFG->dirroot.'/admin/tool/analys/classes/count_sessions.php');
+require_once($CFG->dirroot.'/admin/tool/analys/classes/assignment_submit_list.php');
 require_once($CFG->dirroot.'/admin/tool/analys/classes/renderer.php');
 
 if (isguestuser()) {
@@ -45,12 +45,12 @@ if (!is_siteadmin()) {
     die;
 }
 
-$url = new \moodle_url('/admin/tool/analys/index.php');
+$url = new \moodle_url('/admin/tool/analys/assignment_submit_list.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('analys', 'tool_analys'));
 $PAGE->set_heading(get_string('analys', 'tool_analys'));
 
-$returnurl = new \moodle_url('/admin/tool/analys/index.php');
+$returnurl = new \moodle_url('/admin/tool/analys/assignment_submit_list.php');
 
 // page parameters
 $page    = optional_param('page', 0, PARAM_INT);
@@ -58,25 +58,18 @@ $perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
 $sort    = optional_param('sort', 'date', PARAM_ALPHA);
 $dir     = optional_param('dir', 'ASC', PARAM_ALPHA); // direction
 
-$obj = new \count_sessions();
-$counts = $obj->get_session_count_time_eight_hours();
-$sessions_count = $obj->get_session_today_eight_hours_count();
+$obj = new \get_assignment_submit_list();
+$counts = $obj->get_assignment_submit_count();
 $renderer = $PAGE->get_renderer('tool_analys');
-$baseurl = new \moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+$baseurl = new \moodle_url('assignment_submit_list.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 
 echo $OUTPUT->header();
 
-echo "<a href=\"download.php\">Download a file of a week.</a>";
-echo "<br />";
-echo "User sessions in recent 8 hours: $counts";
-echo "<br />";
-echo "<br />";
+echo "Showing ".$counts." assignments submitted.";
+echo $OUTPUT->paging_bar($counts, $page, $perpage, $baseurl);
+echo $renderer->show_table_assignment_submit_list($page, $perpage);
+echo $OUTPUT->paging_bar($counts, $page, $perpage, $baseurl);
 
-echo "Showing ".$sessions_count." session records of today.";
-echo $OUTPUT->paging_bar($sessions_count, $page, $perpage, $baseurl);
-echo $renderer->show_table($page, $perpage);
-echo $OUTPUT->paging_bar($sessions_count, $page, $perpage, $baseurl);
-
-echo $OUTPUT->single_button(new \moodle_url('/admin/tool/analys/assignment_submit_list.php'), get_string('assignmentsubmitlist', 'tool_analys'));
+echo $OUTPUT->single_button(new \moodle_url('/admin/tool/analys/index.php'), get_string('sessioncount', 'tool_analys'));
 
 echo $OUTPUT->footer();

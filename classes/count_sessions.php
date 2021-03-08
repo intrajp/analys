@@ -108,11 +108,11 @@ class count_sessions {
             $begin_of_day = strtotime("today", time());
         }
 
-	if ($order === 0) {
+        if ($order === 0) {
             $order = "ASC";
-	} else {
+        } else {
             $order = "DESC";
-	}
+        }
 
         $dbtype = $CFG->dbtype;
         if ($dbtype === 'pgsql') {
@@ -125,9 +125,9 @@ class count_sessions {
                                                   WHERE time > $begin_of_day 
                                                   AND lapse = '8H' ORDER BY time $order limit $limit offset $offset",
                                                   array(), $params=null, $limitfrom=0, $limitnum=0);
-	} else {
+        } else {
             return $false;
-	} 
+        } 
 
       return $sessions;
 
